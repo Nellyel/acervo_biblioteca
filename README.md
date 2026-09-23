@@ -19,7 +19,6 @@ Crie e ative um ambiente virtual:
 ```powershell
 py -3.12 -m venv venv
 .\venv\Scripts\Activate.ps1
-
 ```
 
 Instale as dependências:
@@ -48,3 +47,10 @@ A aplicação ficará disponível em:
 http://127.0.0.1:8000/livros/
 ```
 
+## Tecnologias utilizadas
+
+- Python 3.12
+- Django
+- HTML
+- SQLite
+- Git e GitHub
