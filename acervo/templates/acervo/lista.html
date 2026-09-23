@@ -9,15 +9,24 @@
 <form method="get">
 
     <label>Nome:</label>
-    <input type="text" name="nome" placeholder="Digite o nome do livro">
+    <input 
+        type="text"
+        name="nome"
+        value="{{ request.GET.nome }}"
+        placeholder="Digite o título do livro"
+    >
 
     <label>Tipo:</label>
     <select name="tipo">
         <option value="">Todos</option>
 
         {% for valor, nome in tipos_acervo %}
-        <option value="{{ valor }}">{{ nome }}</option>
+            <option value="{{ valor }}"
+                {% if request.GET.tipo == valor %}selected{% endif %}>
+                    {{ nome }}
+            </option>
         {% endfor %}
+
     </select>
 
     <label>Categoria:</label>
@@ -25,9 +34,10 @@
         <option value="">Todas</option>
 
         {% for valor, nome in categorias %}
-        <option value="{{ valor }}">
-            {{ valor }} - {{ nome }}
-        </option>
+            <option value="{{ valor }}"
+                {% if request.GET.categoria == valor %}selected{% endif %}>
+                    {{ valor }} - {{nome }}
+            </option>
         {% endfor %}
     </select>
 
