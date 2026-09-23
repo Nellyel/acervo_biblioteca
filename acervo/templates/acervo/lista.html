@@ -9,14 +9,14 @@
 <form method="get">
 
     <label>Nome:</label>
-    <input type="text" name="nome">
+    <input type="text" name="nome" placeholder="Digite o nome do livro">
 
     <label>Tipo:</label>
     <select name="tipo">
         <option value="">Todos</option>
 
         {% for valor, nome in tipos_acervo %}
-            <option value="{{ valor }}">{{ nome }}</option>
+        <option value="{{ valor }}">{{ nome }}</option>
         {% endfor %}
     </select>
 
@@ -25,9 +25,9 @@
         <option value="">Todas</option>
 
         {% for valor, nome in categorias %}
-            <option value="{{ valor }}">
-                {{ valor }} - {{ nome }}
-            </option>
+        <option value="{{ valor }}">
+            {{ valor }} - {{ nome }}
+        </option>
         {% endfor %}
     </select>
 
@@ -44,17 +44,17 @@
 <ul>
     {% for livro in livros %}
 
-        <li>
-            {{ livro.titulo }} -
-            {{ livro.autor }} -
-            {{ livro.ano }} -
-            {{ livro.get_tipo_acervo_display }} -
-            {{ livro.get_categoria_display }}
-        </li>
+    <li>
+        {{ livro.titulo }} -
+        {{ livro.autor }} -
+        {{ livro.ano }} -
+        {{ livro.get_tipo_acervo_display }} -
+        {{ livro.get_categoria_display }}
+    </li>
 
     {% empty %}
 
-        <li>Nenhum livro encontrado.</li>
+    <li>Nenhum livro encontrado.</li>
 
     {% endfor %}
 </ul>
