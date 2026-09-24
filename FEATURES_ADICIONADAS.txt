@@ -1,0 +1,67 @@
+Laboratório de programação Full Stack
+Aluno: Endriel da Silva Medeiros
+Repositório: http://github.com/Nellyel/acervo_biblioteca
+
+FEATURE 1 - BUSCA E FILTRO
+
+Aquivo principal:
+- acervo/views.py
+- acervo/templates/acervo/lista.html
+
+O que foi feito:
+- Busca por título usando request.GET.get('nome')
+- Filtro por tipo
+- Filtro por categoria
+- Filtros podem funcionar juntos
+- Campo de busca mantém o valor digitado
+- Tipo e categoria permanecem selecionados após pesquisar
+- {% empty %} mostra mensagem quando não há resultado
+
+Pontos importantes
+Livro.object.all()
+-> pega todos os livros
+
+request.GET.get(...)
+-> lê os parâmetros que vieram pela URL
+
+titulo__icontains=nome
+-> procura texto dentro do título sem diferenciar
+maiúsculas/minúsculas
+
+selected
+-> mantém a opção escolhida no selected
+
+Por que fiz:
+Para o usuário poder localizar livros sem percorrer o acervo inteiro
+
+FEATURE 2 - VALIDAÇÃO DO ANO
+
+Arquivo:
+- acervo/forms.py
+
+Import:
+from datetime import date
+
+Método:
+clean_ano()
+
+O que faz:
+- pega o ano com self.cleaned_data.get('ano')
+- compara com date.today().year
+- se o ano for futuro: raise forms.ValidationError(...)
+- se for válido: return ano
+
+Por que clean_ano?
+Porque a regra é específica para o campo "ano".
+
+Por que não precisou de migration?
+Porque não houve alteração no banco/model.
+Só foi adicionada uma regra no formulário
+
+GIT
+
+Feature 1:
+Implementa persistência dos filtros de busca
+
+Feature 2:
+Implementa validação de ano de publicação
