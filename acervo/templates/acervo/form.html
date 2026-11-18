@@ -2,7 +2,7 @@
 
 <h1>Novo livro</h1>
 
-<form method="post">
+<form method="post" onsubmit="this.querySelector('button[type=submit]').disabled = true;">
     {% csrf_token %}
 
     {{ form.as_p }}

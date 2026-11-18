@@ -1,9 +1,17 @@
 from django.shortcuts import render, redirect
 from .models import Livro
 from .forms import LivroForm
+from django.contrib.auth.decorators import login_required
 
+
+def org_atual(request):
+    return request.user.perfil.organizacao
+
+
+@login_required
 def lista_livros(request):
-    livros = Livro.objects.all()
+    org = org_atual(request)
+    livros = Livro.objects.filter(organizacao=org)
 
     nome = request.GET.get('nome', '')
     tipo = request.GET.get('tipo', '')
@@ -24,12 +32,16 @@ def lista_livros(request):
         'categorias': Livro.CATEGORIA,
     })
 
+
+@login_required
 def novo_livro(request):
     if request.method == 'POST':
         form = LivroForm(request.POST)
 
         if form.is_valid():
-            form.save()
+            livro = form.save(commit=False)
+            livro.organizacao = org_atual(request)
+            livro.save()
             return redirect('lista')
 
     else:
