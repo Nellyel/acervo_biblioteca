@@ -39,7 +39,6 @@ def lista_livros(request):
         'categorias': Livro.CATEGORIA,
     })
 
-
 @login_required
 def novo_livro(request):
     if not hasattr(request.user, 'perfil') or not request.user.perfil.eh_admin:

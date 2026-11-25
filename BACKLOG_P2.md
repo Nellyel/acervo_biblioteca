@@ -21,18 +21,27 @@
 - [x] Exportação de dados em CSV.
 - [x] Controle de permissões nas páginas HTML.
 - [x] Atualização do README.md.
+- [x] Disponibilização da API do dashboard.
+- [x] Registro e conclusão das quatro issues no GitHub.
 
 ## Validação
 
 - [x] Verificação do Django sem erros.
-- [x] Nove testes automatizados aprovados.
+- [x] 11 testes automatizados aprovados.
+- [x] Validação das métricas e permissões do dashboard.
 - [x] Validação das seis APIs REST.
 - [x] Teste de acesso entre organizações.
 - [x] Teste de permissões por papel.
 
 ## Finalização
 
-- [ ] Revisar arquivos e dependências.
-- [ ] Consolidar commits.
-- [ ] Enviar alterações ao GitHub.
-- [ ] Conferir requisitos de implantação e entrega.
+- [x] Revisar arquivos e dependências.
+- [x] Consolidar commits da implementação.
+- [x] Registrar e concluir as issues no GitHub.
+- [ ] Publicar a versão final.
+- [ ] Entregar o projeto.
+
+## Observações
+
+- Sistema funcional em ambiente local com SQLite.
+- Implantação na AWS não realizada.

@@ -19,4 +19,6 @@ urlpatterns = [
 
     path('reservas/', views.ReservaListCreate.as_view()),
     path('reservas/<int:pk>/', views.ReservaDetail.as_view()),
+
+    path('dashboard/', views.DashboardApi.as_view()),
 ]

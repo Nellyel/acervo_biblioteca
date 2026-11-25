@@ -338,3 +338,45 @@ class LivroAPITest(APITestCase):
         for recurso, pk in reversed(list(registros.items())):
             resposta = self.client.delete(f'/api/{recurso}/{pk}/')
             self.assertEqual(resposta.status_code, 204)
+
+    def test_dashboard_metricas(self):
+        org = Organizacao.objects.create(nome='Biblioteca A')
+        usuario = User.objects.create_user(username='AdminDashboard')
+
+        Perfil.objects.create(
+            usuario=usuario,
+            organizacao=org,
+            papel='admin'
+        )
+
+        self.client.force_authenticate(user=usuario)
+        resposta = self.client.get('/api/dashboard/')
+
+        self.assertEqual(resposta.status_code, 200)
+        self.assertEqual(resposta.data['kpi']['total'], 0)
+        self.assertEqual(resposta.data['ranking'], [])
+        self.assertEqual(resposta.data['serie'], [])
+        self.assertEqual(
+            resposta.data['distribuicao']['abertos'], 0
+        )
+        self.assertEqual(
+            resposta.data['distribuicao']['devolvidos'], 0
+        )
+
+    def test_dashboard_operador(self):
+        org = Organizacao.objects.create(nome='Biblioteca B')
+        usuario = User.objects.create_user(username='OperadorDashboard')
+
+        Perfil.objects.create(
+            usuario=usuario,
+            organizacao=org,
+            papel='operador'
+        )
+
+        self.client.force_authenticate(user=usuario)
+        resposta = self.client.get('/api/dashboard/')
+
+        self.assertEqual(resposta.status_code, 200)
+        self.assertIn('kpi', resposta.data)
+        self.assertIn('ranking', resposta.data)
+        self.assertNotIn('serie', resposta.data)

@@ -59,6 +59,7 @@ permissões por papel e isolamento por organização.
 | Membros | /api/membros/ |
 | Empréstimos | /api/emprestimos/ |
 | Reservas | /api/reservas/ |
+| Dashboard | /api/dashboard/ |
 
 Os recursos disponibilizam operações de CRUD,
 respeitando as permissões e regras de negócio.
@@ -130,7 +131,7 @@ Execute:
 python manage.py test
 ```
 
-O projeto possui nove testes automatizados que contemplam:
+O projeto possui 11 testes automatizados que contemplam:
 
 - Bloqueio de usuários não autenticados.
 - Bloqueio de usuários sem perfil.
@@ -141,6 +142,8 @@ O projeto possui nove testes automatizados que contemplam:
 - Cálculo de multas.
 - Fila de reservas.
 - Operações e permissões dos novos endpoints REST.
+- Validação das métricas do dashboard.
+- Validação das permissões do dashboard.
 
 Verificação geral do projeto:
 

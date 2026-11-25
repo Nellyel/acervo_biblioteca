@@ -2,6 +2,10 @@ from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated, BasePermission, SAFE_METHODS
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from django.db.models import ProtectedError
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from .dashboard import calcular_metricas
+from .forms import filtrar_periodo
 
 from .models import Livro, Autor, Exemplar, Membro, Emprestimo, Reserva
 
@@ -122,3 +126,22 @@ class ReservaListCreate(BaseListCreate):
 
 class ReservaDetail(BaseDetail):
     serializer_class = ReservaSerializer
+
+class DashboardApi(APIView):
+    permission_classes = [IsAuthenticated, PermissaoAcervo]
+
+    def get(self, request):
+        org = obter_organizacao(request.user)
+
+        base = filtrar_periodo(
+            request,
+            Emprestimo.objects.filter(organizacao=org)
+        )
+
+        dados = calcular_metricas(base)
+        dados['ranking'] = list(dados['ranking'])
+
+        if not request.user.perfil.eh_admin:
+            dados.pop('serie', None)
+
+        return Response(dados)
