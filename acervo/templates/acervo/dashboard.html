@@ -1,0 +1,84 @@
+<h1>Dashboard da Biblioteca</h1>
+
+<h2>Resumo</h2>
+
+<p><strong>Total de empréstimos:</strong> {{ kpi.total }}</p>
+
+<p>
+    <strong>Empréstimos abertos:</strong>
+    {{ distribuicao.abertos }}
+</p>
+
+<p>
+    <strong>Empréstimos devolvidos:</strong>
+    {{ distribuicao.devolvidos }}
+</p>
+
+<hr>
+
+<h2>Livros mais emprestados</h2>
+
+<table border="1">
+    <tr>
+        <th>Livro</th>
+        <th>Empréstimos</th>
+    </tr>
+
+    {% for item in ranking %}
+    <tr>
+        <td>{{ item.exemplar__livro__titulo }}</td>
+        <td>{{ item.total }}</td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="2">Nenhum empréstimo encontrado.</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h2>Filtrar período</h2>
+
+<form method="get">
+    {{ form.as_p }}
+    <button type="submit">Filtrar</button>
+</form>
+
+<a href="{% url 'dashboard' %}">Limpar filtro</a>
+
+<hr>
+
+{% if mostra_series %}
+<hr>
+
+<h2>Empréstimos por mês</h2>
+
+{{ serie|json_script:"dados-serie" }}
+
+<canvas id="graficoEmprestimos" width="600" height="250"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const dados = JSON.parse(
+        document.getElementById('dados-serie').textContent
+    );
+
+    new Chart(
+        document.getElementById('graficoEmprestimos'),
+        {
+            type: 'bar',
+            data: {
+                labels: dados.map(item => item.mes),
+                datasets: [{
+                    label: 'Empréstimos',
+                    data: dados.map(item => item.total)
+                }]
+            }
+        }
+    );
+</script>
+
+<a href="{% url 'exportar_csv' %}?{{ request.GET.urlencode }}">
+    Exportar CSV
+</a>
+{% endif %}

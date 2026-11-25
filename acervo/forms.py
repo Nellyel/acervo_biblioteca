@@ -23,3 +23,24 @@ class LivroForm(forms.ModelForm):
             )
             
         return ano
+
+class PeriodoForm(forms.Form):
+    inicio = forms.DateField(required=False)
+    fim = forms.DateField(required=False)
+
+
+def filtrar_periodo(request, qs):
+    form = PeriodoForm(request.GET)
+
+    if form.is_valid():
+        if form.cleaned_data['inicio']:
+            qs = qs.filter(
+                data_emprestimo__gte=form.cleaned_data['inicio']
+            )
+
+        if form.cleaned_data['fim']:
+            qs = qs.filter(
+                data_emprestimo__lte=form.cleaned_data['fim']
+            )
+
+    return qs

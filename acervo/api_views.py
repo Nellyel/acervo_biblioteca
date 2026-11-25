@@ -1,26 +1,124 @@
 from rest_framework import generics
-from rest_framework.permissions import IsAuthenticated
-from .models import Livro
-from .serializers import LivroSerializer
+from rest_framework.permissions import IsAuthenticated, BasePermission, SAFE_METHODS
+from rest_framework.exceptions import PermissionDenied, ValidationError
+from django.db.models import ProtectedError
+
+from .models import Livro, Autor, Exemplar, Membro, Emprestimo, Reserva
+
+from .serializers import (
+    LivroSerializer,
+    AutorSerializer,
+    ExemplarSerializer,
+    MembroSerializer,
+    EmprestimoSerializer,
+    ReservaSerializer
+)
 
 
-class LivroListCreate(generics.ListCreateAPIView):
-    serializer_class = LivroSerializer
-    permission_classes = [IsAuthenticated]
+def obter_organizacao(user):
+    if not hasattr(user, 'perfil'):
+        raise PermissionDenied(
+            'Usuário sem perfil cadastrado.'
+        )
+
+    return user.perfil.organizacao
+
+
+class PermissaoAcervo(BasePermission):
+
+    def has_permission(self, request, view):
+        if not hasattr(request.user, 'perfil'):
+            return False
+
+        if request.method in SAFE_METHODS:
+            return True
+
+        return request.user.perfil.eh_admin
+
+
+class BaseListCreate(generics.ListCreateAPIView):
+    permission_classes = [IsAuthenticated, PermissaoAcervo]
 
     def get_queryset(self):
-        org = self.request.user.perfil.organizacao
-        return Livro.objects.filter(organizacao=org)
+        org = obter_organizacao(self.request.user)
+        return self.serializer_class.Meta.model.objects.filter(
+            organizacao=org
+        )
 
     def perform_create(self, serializer):
-        org = self.request.user.perfil.organizacao
+        org = obter_organizacao(self.request.user)
         serializer.save(organizacao=org)
 
 
-class LivroDetail(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = LivroSerializer
-    permission_classes = [IsAuthenticated]
+class BaseDetail(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated, PermissaoAcervo]
 
     def get_queryset(self):
-        org = self.request.user.perfil.organizacao
-        return Livro.objects.filter(organizacao=org)
+        org = obter_organizacao(self.request.user)
+        return self.serializer_class.Meta.model.objects.filter(
+            organizacao=org
+        )
+
+    def perform_destroy(self, instance):
+        try:
+            instance.delete()
+        except ProtectedError:
+            raise ValidationError(
+                'Este registro possui vínculos e não pode ser excluído.'
+            )
+
+
+class LivroListCreate(BaseListCreate):
+    serializer_class = LivroSerializer
+
+
+class LivroDetail(BaseDetail):
+    serializer_class = LivroSerializer
+
+
+class AutorListCreate(BaseListCreate):
+    serializer_class = AutorSerializer
+
+
+class AutorDetail(BaseDetail):
+    serializer_class = AutorSerializer
+
+
+class ExemplarListCreate(BaseListCreate):
+    serializer_class = ExemplarSerializer
+
+
+class ExemplarDetail(BaseDetail):
+    serializer_class = ExemplarSerializer
+
+
+class MembroListCreate(BaseListCreate):
+    serializer_class = MembroSerializer
+
+
+class MembroDetail(BaseDetail):
+    serializer_class = MembroSerializer
+
+
+class EmprestimoListCreate(BaseListCreate):
+    serializer_class = EmprestimoSerializer
+
+
+class EmprestimoDetail(BaseDetail):
+    serializer_class = EmprestimoSerializer
+
+    def perform_destroy(self, instance):
+        if not instance.data_devolucao:
+            raise ValidationError(
+                'Devolva o exemplar antes de excluir o empréstimo.'
+            )
+
+        super().perform_destroy(instance)
+
+
+class ReservaListCreate(BaseListCreate):
+    serializer_class = ReservaSerializer
+
+
+class ReservaDetail(BaseDetail):
+    serializer_class = ReservaSerializer

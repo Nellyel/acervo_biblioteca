@@ -19,14 +19,30 @@ class DaOrganizacao(models.Model):
         abstract = True
 
 class Perfil(models.Model):
+    PAPEIS = [
+        ('admin', 'Administrador'),
+        ('operador', 'Operador'),
+    ]
+
     usuario = models.OneToOneField(
         User,
         on_delete=models.CASCADE
     )
+
     organizacao = models.ForeignKey(
         Organizacao,
         on_delete=models.PROTECT
     )
+
+    papel = models.CharField(
+        max_length=20,
+        choices=PAPEIS,
+        default='operador'
+    )
+
+    @property
+    def eh_admin(self):
+        return self.papel == 'admin'
 
     def __str__(self):
         return self.usuario.username
